@@ -10,7 +10,7 @@ install_requires = [
 
 version = '0.0.1.dev0'
 
-PACKAGE_NAME = 'py-yr'
+PACKAGE_NAME = 'py_yr'
 
 setup(
     name=PACKAGE_NAME,
