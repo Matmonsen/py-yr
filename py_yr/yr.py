@@ -8,8 +8,8 @@ from urllib.error import HTTPError
 
 import xmltodict
 
-from weather_report.py_yr.config.settings import LANGUAGE
-from weather_report.py_yr.weatherdata.weatherdata import WeatherData
+from py_yr.config.settings import LANGUAGE
+from py_yr.weatherdata.weatherdata import WeatherData
 
 
 class Yr(object):
