@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from weather_report.py_yr import utilities
+from py_yr import utilities
 from .symbol import Symbol
 from .precipitation import Precipitation
 from .winddirection import WindDirection

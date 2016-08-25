@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from _datetime import datetime
+from datetime import datetime
 
 
 def parse_iso8601(time: str) -> datetime:
