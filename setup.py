@@ -23,7 +23,7 @@ setup(
     #long_description=read('README.rst') + '\n\n' + read('CHANGELOG.rst'),
     packages=find_packages(),
     install_requires=install_requires,
-    package_dir={'py-yr': 'py-yr'},
+    package_dir={'py-yr': 'py_yr'},
     #tests_require=
     #zip_safe=
     #test_suite=
