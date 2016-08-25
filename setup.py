@@ -17,13 +17,13 @@ setup(
     version=version,
     author="Sindre Nerdal",
     author_email="Sindre.nerdal@gmail.com",
-    url="https://github.com/Matmonsen/py-yr",
+    url="https://github.com/Matmonsen/py_yr",
     keywords="python yr xml",
     description=__doc__,
     #long_description=read('README.rst') + '\n\n' + read('CHANGELOG.rst'),
     packages=find_packages(),
     install_requires=install_requires,
-    py_modules=['py-yr'],
+    py_modules=['py_yr'],
     #tests_require=
     #zip_safe=
     #test_suite=
