@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import json
+import xml
 
-from urllib import request
-from urllib.error import HTTPError
+import requests
 
 import xmltodict
 
-from py_yr.config.settings import LANGUAGE
+from py_yr.config.settings import LANGUAGE, FORECAST_TYPE_STANDARD
 from py_yr.weatherdata.weatherdata import WeatherData
 
 
@@ -19,7 +19,7 @@ class Yr(object):
 
     def __init__(self,
                  location,
-                 forecast_type='standard',
+                 forecast_type=FORECAST_TYPE_STANDARD,
                  language='en',
                  source_data=None,):
 
@@ -27,17 +27,23 @@ class Yr(object):
         self.forecast_type = forecast_type
         self.language = language
         self.location = location
-        self.xml_file = LANGUAGE[language]['forecast_type'][self.forecast_type]
-        self.url = LANGUAGE[language]['url'] + self.location + self.xml_file
 
-    def get_as_object(self):
+        if not self.location.endswith('/'):
+            self.location += "/"
+
+        self.url = "{0}{1}{2}".format(
+            LANGUAGE[language]['url'],
+            self.location,
+            LANGUAGE[language]['forecast_type'][self.forecast_type])
+
+    def get_as_object(self) -> WeatherData:
         """
         Renders the weather data as objects.
         Returns: Object representation of the weather data.
 
         """
         data = None
-        raw_data = self.get_as_json()
+        raw_data = self.get_as__dict()
 
         if raw_data is not None:
             data = WeatherData(raw_data)
@@ -51,55 +57,36 @@ class Yr(object):
         """
         return self.source_data
 
-    def get_as_ordered_dict(self) -> dict:
+    def get_as__dict(self) -> dict:
         """
-        Renders the weather data as an ordered dict.
+        Renders the weather data as a dict.
         Returns(dict): Dict representation of weather data
 
         """
         raw_data = self.get_as_xml()
         if raw_data is not None:
             try:
-                return xmltodict.parse(raw_data)
+                try:
+                    ordred_dict = xmltodict.parse(raw_data)
+                    return json.loads(json.dumps(ordred_dict).replace('@', ''))['weatherdata']
+                except (TypeError, ValueError) as err:
+                    return None
             except ValueError:
                 return None
-
-    def get_as_json(self) -> str:
-        """
-            Renders the weather data as json.
-        Returns(str): json represented string of weather data, or none if no data exists.
-
-        """
-        raw_data = self.get_as_ordered_dict()
-        if raw_data is not None:
-            try:
-                return json.loads(json.dumps(raw_data).replace('@', ''))['weatherdata']
-            except (TypeError, ValueError) as err:
-                return None
-
-    def is_valid_url(self):
-        """
-        Check weather the location given is valid or not.
-        Returns: None of the location is not valid. Weather data for the location otherwise.
-
-        """
-        try:
-            response = request.urlopen(self.url)
-            if response.status is 200:
-                return response
-            else:
-                return None
-        except HTTPError:
-            return None
+        return None
 
     def download(self) -> None:
         """
             Downloads weather data from url
-
         """
-        response = self.is_valid_url()
-        if response is not None:
-            data = response.read()
-            self.source_data = data.decode('utf-8')
+        response = requests.get(self.url)
+        if response.status_code is 200:
+            try:
+                # Some special cases like Norge/Oslo/Oslo is not a valid location,
+                # but returns a normal html page, not a xml error like with a invalid location
+                xmltodict.parse(response.text)
+                self.source_data = response.text
+            except xml.parsers.expat.ExpatError:
+                self.source_data = None
         else:
             self.source_data = None
