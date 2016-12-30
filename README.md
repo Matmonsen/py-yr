@@ -25,3 +25,7 @@ yr.get_as_object()
 ```
 
 ### [License](https://github.com/Matmonsen/py-yr/blob/master/LICENSE)
+
+### See also
+ [Repository with css web font for yr weather symbols](https://github.com/Matmonsen/yr-icons/)
+
