@@ -19,8 +19,8 @@ class Yr(object):
 
     def __init__(self,
                  location,
-                 forecast_type=FORECAST_TYPE_STANDARD,
                  language='en',
+                 forecast_type=FORECAST_TYPE_STANDARD,
                  source_data=None,):
 
         self.source_data = source_data
@@ -31,10 +31,13 @@ class Yr(object):
         if not self.location.endswith('/'):
             self.location += "/"
 
-        self.url = "{0}{1}{2}".format(
-            LANGUAGE[language]['url'],
-            self.location,
-            LANGUAGE[language]['forecast_type'][self.forecast_type])
+        try:
+            self.url = "{0}{1}{2}".format(
+                LANGUAGE[language]['url'],
+                self.location,
+                LANGUAGE[language]['forecast_type'][self.forecast_type])
+        except KeyError:
+            self.url = "http://yr.no/sted/rubbish"
 
     def get_as_object(self) -> WeatherData:
         """
